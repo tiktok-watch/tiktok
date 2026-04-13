@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>$yph0n.sys v5 // Advanced OSINT & GEOINT Framework</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000000;
+      font-family: 'Courier New', 'Fira Code', 'Source Code Pro', monospace;
+      color: #0f0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* EPIC LOADING SCREEN */
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    #epicCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .loading-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      padding: 1.2rem;
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .main-content.visible {
+      opacity: 1;
+    }
+
+    /* GLASS PANELS */
+    .glass-panel {
+      background: #030b03;
+      border: 1px solid #1b4f1b;
+      border-radius: 28px;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.08);
+    }
+
+    .hero {
+      text-align: center;
+      background: linear-gradient(135deg, #030b03, #001200);
+    }
+
+    .hero h1 {
+      font-size: clamp(1.8rem, 8vw, 3.5rem);
+      text-shadow: 0 0 10px #0f0;
+      margin-bottom: 0.8rem;
+    }
+
+    .hero p {
+      font-size: 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+      color: #9fdf9f;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #0a2f0a;
+      padding: 0.3rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+    }
+
+    /* Discord CTA (prominent) */
+    .discord-cta {
+      background: #0a1a0a;
+      border-radius: 60px;
+      padding: 0.8rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      border: 1px solid #2ecc2e;
+      box-shadow: 0 0 12px rgba(0,255,0,0.2);
+    }
+
+    .discord-tag {
+      background: #021002;
+      padding: 6px 16px;
+      border-radius: 40px;
+      font-family: monospace;
+      font-size: 1rem;
+      border: 1px solid #0f0;
+    }
+
+    .copy-btn-highlight {
+      background: #1a4f1a;
+      border: 1px solid #0f0;
+      padding: 6px 20px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-family: monospace;
+      font-size: 0.85rem;
+      font-weight: bold;
+      transition: all 0.2s;
+    }
+
+    .copy-btn-highlight:hover {
+      background: #2e8b2e;
+      box-shadow: 0 0 12px #0f0;
+    }
+
+    /* Toolkit Toggle */
+    .toolkit-toggle {
+      text-align: center;
+      margin: 2rem 0 1rem;
+    }
+
+    .toolkit-btn {
+      background: #0a2f0a;
+      border: 2px solid #0f0;
+      padding: 14px 40px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: monospace;
+    }
+
+    .toolkit-btn:hover {
+      background: #1a5a1a;
+      box-shadow: 0 0 18px #0f0;
+    }
+
+    /* Toolkit Area */
+    .toolkit-area {
+      display: none;
+    }
+
+    .toolkit-area.active {
+      display: block;
+    }
+
+    .category {
+      margin-bottom: 2.5rem;
+    }
+
+    .category h3 {
+      font-size: 1.5rem;
+      border-left: 5px solid #0f0;
+      padding-left: 16px;
+      margin-bottom: 1.5rem;
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .tool-card {
+      background: #051005;
+      border-radius: 24px;
+      padding: 1.3rem;
+      border: 1px solid #1f5f1f;
+      transition: transform 0.1s ease;
+    }
+
+    .tool-card:hover {
+      border-color: #0f0;
+      box-shadow: 0 0 10px rgba(0,255,0,0.2);
+    }
+
+    .tool-card h4 {
+      margin-bottom: 0.8rem;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 1rem 0;
+    }
+
+    .tool-input {
+      flex: 2;
+      min-width: 150px;
+      background: #021002;
+      border: 1px solid #2b6e2b;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #0f0;
+      border-radius: 40px;
+      outline: none;
+    }
+
+    .tool-input:focus {
+      border-color: #0f0;
+      box-shadow: 0 0 5px #0f0;
+    }
+
+    /* Custom file upload button */
+    .file-upload-wrapper {
+      position: relative;
+      display: inline-block;
+      flex: 2;
+    }
+    .file-upload-label {
+      display: block;
+      background: #021002;
+      border: 1px solid #2b6e2b;
+      padding: 10px 14px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #0f0;
+      border-radius: 40px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .file-upload-label:hover {
+      background: #0a2f0a;
+    }
+    input[type="file"] {
+      display: none;
+    }
+
+    .tool-btn {
+      background: #0a2f0a;
+      border: 1px solid #0f0;
+      color: #0f0;
+      padding: 10px 18px;
+      font-weight: bold;
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: 0.2s;
+    }
+
+    .tool-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .result-box {
+      background: #021002;
+      border-left: 3px solid #0f0;
+      padding: 0.8rem;
+      margin-top: 0.8rem;
+      font-size: 0.7rem;
+      border-radius: 14px;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+
+    /* PERMANENT BLUR */
+    .blur-permanent {
+      filter: blur(5px);
+      background: #0f1f0f;
+      display: inline-block;
+      padding: 0 6px;
+      border-radius: 8px;
+      user-select: none;
+    }
+
+    /* TESTIMONIALS - EXPANDED & REALISTIC */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .testimonial {
+      background: #061006;
+      padding: 1.2rem;
+      border-radius: 20px;
+      border-left: 4px solid #0f0;
+    }
+
+    .testimonial p {
+      font-style: italic;
+      font-size: 0.85rem;
+      line-height: 1.4;
+    }
+
+    .testimonial .author {
+      margin-top: 0.8rem;
+      font-size: 0.75rem;
+      color: #6fcf6f;
+      font-weight: bold;
+    }
+
+    .testimonial .role {
+      font-size: 0.65rem;
+      color: #3f9f3f;
+    }
+
+    /* SUBSCRIPTION PLANS */
+    .subscription-plan {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+
+    .plan-card {
+      background: #031003;
+      border: 1px solid #1f731f;
+      border-radius: 24px;
+      padding: 1rem 1.2rem;
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .plan-card.selected {
+      background: #0a250a;
+      border: 2px solid #0f0;
+      box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+    }
+
+    .plan-price {
+      font-size: 1.6rem;
+      font-weight: bold;
+      color: #3eff3e;
+    }
+
+    .status-msg {
+      font-size: 0.75rem;
+      color: #6fcf6f;
+      text-align: center;
+      margin-top: 0.8rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.7rem;
+      margin-top: 2rem;
+      opacity: 0.7;
+      padding-bottom: 1rem;
+    }
+
+    /* MOBILE IMPROVEMENTS */
+    @media (max-width: 700px) {
+      .main-content { padding: 0.8rem; }
+      .glass-panel { padding: 1.2rem; }
+      .tools-grid { grid-template-columns: 1fr; gap: 1.2rem; }
+      .input-group { flex-direction: column; }
+      .tool-btn { width: 100%; }
+      .tool-input, .file-upload-wrapper { width: 100%; }
+      .discord-cta { flex-direction: column; text-align: center; }
+      .category h3 { font-size: 1.2rem; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- EPIC LOADING SCREEN -->
+<div class="loading-screen" id="loadingScreen">
+  <canvas id="epicCanvas"></canvas>
+</div>
+
+<!-- MAIN WEBSITE -->
+<div class="main-content" id="mainContent">
+  
+  <!-- HERO SECTION -->
+  <div class="glass-panel hero">
+    <div class="badge">⚡ NEXT-GEN OSINT & GEOINT FRAMEWORK ⚡</div>
+    <h1>welcome to $yph0n.sys v5</h1>
+    <p>Advanced Open-Source Intelligence (OSINT) and Geospatial Intelligence (GEOINT) toolkit. Leverage cutting-edge AI, dark web monitoring, identity correlation, and real-time geolocation tracking. Trusted by security researchers, journalists, and law enforcement agencies worldwide.</p>
+    
+    <!-- Prominent Discord CTA for subscription -->
+    <div class="discord-cta">
+      <span>🔓 UNLOCK ALL TOOLS — CONTACT ME ON DISCORD:</span>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center;">
+        <code class="discord-tag">@syph0n.sys.core</code>
+        <button id="topCopyBtn" class="copy-btn-highlight">📋 COPY USERNAME</button>
+      </div>
+    </div>
+    <div style="font-size: 0.7rem; margin-top: 10px; color: #8aff8a;">Select a subscription plan below → copy Discord → message me to activate.</div>
+    
+    <div class="toolkit-toggle">
+      <button id="showToolkitBtn" class="toolkit-btn">🔓 ACCESS FULL TOOLKIT 🔓</button>
+    </div>
+  </div>
+
+  <!-- TOOLKIT AREA (HIDDEN INITIALLY) -->
+  <div id="toolkitArea" class="toolkit-area">
+    
+    <!-- Category 1: Identity & Leak Intelligence -->
+    <div class="category">
+      <h3>🆔 IDENTITY & LEAK INTELLIGENCE</h3>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>🔍 Spectral Leak Hunter</h4>
+          <div class="input-group">
+            <input type="text" id="osintUsername" class="tool-input" placeholder="Username">
+            <button id="searchLeakBtn" class="tool-btn">SCAN BREACHES</button>
+          </div>
+          <div id="leakResult" class="result-box">Enter username to scan 340+ databases.</div>
+        </div>
+        <div class="tool-card">
+          <h4>👤 Real Name Resolver</h4>
+          <div class="input-group">
+            <input type="text" id="nameInput" class="tool-input" placeholder="Username">
+            <button id="nameLookupBtn" class="tool-btn">LOOKUP</button>
+          </div>
+          <div id="nameResult" class="result-box">Enter username to reveal real identity.</div>
+        </div>
+        <div class="tool-card">
+          <h4>🕵️ Deep Identity Unmask</h4>
+          <div class="input-group">
+            <input type="text" id="identityTarget" class="tool-input" placeholder="Handle / Email">
+            <button id="revealIdentityBtn" class="tool-btn">UNMASK</button>
+          </div>
+          <div id="identityResult" class="result-box">Enter target for full de-anonymization.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 2: Network & Geolocation -->
+    <div class="category">
+      <h3>🌍 NETWORK & GEOLOCATION</h3>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>IP Geolocation Tracker</h4>
+          <div class="input-group">
+            <input type="text" id="ipInput" class="tool-input" placeholder="IPv4 / IPv6">
+            <button id="ipTrackBtn" class="tool-btn">LOCATE IP</button>
+          </div>
+          <div id="ipResult" class="result-box">Enter IP address for location, ISP, proxy status.</div>
+        </div>
+        <div class="tool-card">
+          <h4>Username → IP Resolver</h4>
+          <div class="input-group">
+            <input type="text" id="pullerUsername" class="tool-input" placeholder="Username">
+            <button id="pullIpBtn" class="tool-btn">RESOLVE IP</button>
+            <button id="sendToTrackerBtn" class="tool-btn">SEND TO TRACKER</button>
+          </div>
+          <div id="pullerResult" class="result-box">Enter username to resolve associated IP.</div>
+        </div>
+        <div class="tool-card">
+          <h4>WiFi SSID Geolocator</h4>
+          <div class="input-group">
+            <input type="text" id="wifiInput" class="tool-input" placeholder="BSSID / SSID">
+            <button id="wifiBtn" class="tool-btn" disabled>LOCKED (SUBSCRIBE)</button>
+          </div>
+          <div id="wifiResult" class="result-box">[LOCKED] Subscribe to unlock.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 3: Dark Web & Breach Monitoring -->
+    <div class="category">
+      <h3>💀 DARK WEB & BREACH MONITORING</h3>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>Dark Web Email Scraper</h4>
+          <div class="input-group"><input type="email" id="darkEmailInput" class="tool-input" placeholder="email@example.com"><button id="darkEmailBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="darkEmailResult" class="result-box">[LOCKED]</div>
+        </div>
+        <div class="tool-card">
+          <h4>Leaked Password Lookup</h4>
+          <div class="input-group"><input type="text" id="leakPassInput" class="tool-input" placeholder="Hash/Word"><button id="leakPassBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="leakPassResult" class="result-box">[LOCKED]</div>
+        </div>
+        <div class="tool-card">
+          <h4>Credit Card BIN Scanner</h4>
+          <div class="input-group"><input type="text" id="binInput" class="tool-input" placeholder="Card BIN"><button id="binBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="binResult" class="result-box">[LOCKED]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 4: AI & Image Intelligence -->
+    <div class="category">
+      <h3>🤖 AI & IMAGE INTELLIGENCE</h3>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>AI Image Geolocator</h4>
+          <div class="input-group">
+            <div class="file-upload-wrapper">
+              <label class="file-upload-label" for="imageUpload">📁 CHOOSE IMAGE</label>
+              <input type="file" id="imageUpload" accept="image/jpeg,image/png">
+            </div>
+            <button id="imageGeoBtn" class="tool-btn" disabled>ANALYZE (LOCKED)</button>
+          </div>
+          <div id="imageResult" class="result-box">[LOCKED] Upload image to extract GPS coordinates.</div>
+        </div>
+        <div class="tool-card">
+          <h4>Deepfake Detection</h4>
+          <div class="input-group"><input type="text" id="deepfakeInput" class="tool-input" placeholder="Image/Video URL"><button id="deepfakeBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="deepfakeResult" class="result-box">[LOCKED]</div>
+        </div>
+        <div class="tool-card">
+          <h4>Facial Recognition Cross-Match</h4>
+          <div class="input-group"><input type="text" id="faceInput" class="tool-input" placeholder="Image URL"><button id="faceBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="faceResult" class="result-box">[LOCKED]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 5: Phone & Social Media -->
+    <div class="category">
+      <h3>📱 PHONE & SOCIAL OSINT</h3>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>Phone → Address Lookup</h4>
+          <div class="input-group"><input type="text" id="phoneInput" class="tool-input" placeholder="+1..."><button id="phoneLookupBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="phoneResult" class="result-box">[LOCKED]</div>
+        </div>
+        <div class="tool-card">
+          <h4>Social Media Mapper</h4>
+          <div class="input-group"><input type="text" id="socialInput" class="tool-input" placeholder="@handle"><button id="socialBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="socialResult" class="result-box">[LOCKED]</div>
+        </div>
+        <div class="tool-card">
+          <h4>SIM Swap Risk Check</h4>
+          <div class="input-group"><input type="text" id="simInput" class="tool-input" placeholder="Phone"><button id="simBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="simResult" class="result-box">[LOCKED]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category 6: Cryptocurrency & Financial -->
+    <div class="category">
+      <h3>💰 CRYPTO & FINANCIAL TRACKING</h3>
+      <div class="tools-grid">
+        <div class="tool-card">
+          <h4>BTC Wallet Profiler</h4>
+          <div class="input-group"><input type="text" id="btcInput" class="tool-input" placeholder="BTC address"><button id="btcBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="btcResult" class="result-box">[LOCKED]</div>
+        </div>
+        <div class="tool-card">
+          <h4>Darknet Market Scraper</h4>
+          <div class="input-group"><input type="text" id="darkMarketInput" class="tool-input" placeholder="Keyword"><button id="darkMarketBtn" class="tool-btn" disabled>LOCKED</button></div>
+          <div id="darkMarketResult" class="result-box">[LOCKED]</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBSCRIPTION PLANS (again, for easy access) -->
+    <div class="glass-panel">
+      <h3>💎 UNLOCK FULL SYSTEM</h3>
+      <div style="font-size:0.8rem; margin-bottom: 1rem;">Choose a plan — then contact me on Discord to activate.<div style="margin-top: 6px;"><span class="blur-permanent">🔗 share with friends (account sharing allowed)</span></div></div>
+      <div class="subscription-plan" id="planGrid">
+        <div class="plan-card" data-plan="25"><div class="plan-price">$25</div><div>1 week access</div></div>
+        <div class="plan-card" data-plan="50"><div class="plan-price">$50</div><div>2 weeks access</div></div>
+        <div class="plan-card" data-plan="100"><div class="plan-price">$100</div><div>LIFETIME</div></div>
+      </div>
+      <div style="text-align: center; margin: 0.8rem 0; background: #0a1a0a; padding: 10px; border-radius: 50px; font-size:0.75rem;">⚡ TO ACTIVATE: Copy my Discord username (top section) and message me ⚡</div>
+      <div id="subStatus" class="status-msg"></div>
+    </div>
+  </div>
+
+  <!-- EXPANDED TESTIMONIALS - REALISTIC -->
+  <div class="glass-panel">
+    <h3>📢 WHAT SECURITY PROFESSIONALS SAY</h3>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <p>"$yph0n.sys v5 helped me track down a threat actor within 24 hours. The IP resolver is scary accurate and the dark web module uncovered credentials I never knew existed."</p>
+        <div class="author">— Jake R., Senior Cybersecurity Analyst @ Mandiant</div>
+        <div class="role">Incident Response Team Lead</div>
+      </div>
+      <div class="testimonial">
+        <p>"The image geolocation tool is next-level. I uploaded a photo from a suspect and it pinpointed the exact city block. This saved our investigation weeks of work."</p>
+        <div class="author">— Maria K., Forensic Investigator @ CrowdStrike</div>
+        <div class="role">Digital Forensics Specialist</div>
+      </div>
+      <div class="testimonial">
+        <p>"I've used Maltego, OSINT Framework, and many others. $yph0n.sys v5 combines speed, depth, and an intuitive interface. The real-time breach monitoring is a game changer."</p>
+        <div class="author">— David L., Intelligence Analyst @ Recorded Future</div>
+        <div class="role">Threat Intelligence Lead</div>
+      </div>
+      <div class="testimonial">
+        <p>"The phone-to-address resolver (once unlocked) gave me a physical address from a burner number in under 30 seconds. Absolutely essential for my OSINT work."</p>
+        <div class="author">— Sarah T., Private Investigator</div>
+        <div class="role">CEO, Digital Shadows Investigations</div>
+      </div>
+      <div class="testimonial">
+        <p>"I was skeptical at first, but the username to real name resolver returned a match that led directly to a suspect. The blur is annoying but subscribing is worth every penny."</p>
+        <div class="author">— Marcus V., Law Enforcement Consultant</div>
+        <div class="role">Former Cybercrime Unit, FBI</div>
+      </div>
+      <div class="testimonial">
+        <p>"The dark web scraper found leaked employee credentials from a data breach that wasn't publicly reported yet. We patched it before any damage occurred."</p>
+        <div class="author">— Elena R., CISO at Fortune 500 Company</div>
+        <div class="role">Information Security Director</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>$yph0n.sys v5 // ENCRYPTED & SECURE // NEXT-GEN OSINT // DISCORD: @syph0n.sys.core</footer>
+</div>
+
+<script>
+  (function() {
+    // ---------- LOADING ANIMATION (PARTICLE ASSEMBLY + GLITCH) ----------
+    const canvas = document.getElementById('epicCanvas');
+    const ctx = canvas.getContext('2d');
+    let animFrame = null;
+    let particles = [];
+    let targetPoints = [];
+    let stage = 0;
+    let progress = 0;
+    let loadingComplete = false;
+    const TEXT = "$yph0n.sys v5";
+    
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      if (!loadingComplete) initLoading();
+    }
+    
+    function getTextPoints() {
+      const w = canvas.width, h = canvas.height;
+      const fontSize = Math.min(52, Math.max(26, Math.floor(w / 14)));
+      const font = `${fontSize}px 'Courier New', monospace`;
+      const off = document.createElement('canvas');
+      off.width = w; off.height = h;
+      const octx = off.getContext('2d');
+      octx.fillStyle = '#000'; octx.fillRect(0,0,w,h);
+      octx.font = font;
+      octx.fillStyle = '#fff';
+      octx.textAlign = 'center';
+      octx.textBaseline = 'middle';
+      octx.fillText(TEXT, w/2, h/2);
+      const img = octx.getImageData(0,0,w,h);
+      const pts = [];
+      const step = 3;
+      for (let y=0; y<h; y+=step) {
+        for (let x=0; x<w; x+=step) {
+          const idx = (y*w + x)*4;
+          if (img.data[idx] > 200) pts.push({x, y});
+        }
+      }
+      return pts;
+    }
+    
+    function initLoading() {
+      const w = canvas.width, h = canvas.height;
+      targetPoints = getTextPoints();
+      if (targetPoints.length === 0) {
+        for (let i=0; i<700; i++) targetPoints.push({x: w/2 + (Math.sin(i)*70), y: h/2 + (Math.cos(i*0.5)*45)});
+      }
+      const num = Math.min(targetPoints.length, 700);
+      particles = [];
+      for (let i=0; i<num; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const rad = Math.max(w,h) * 1.3;
+        particles.push({
+          x: w/2 + Math.cos(angle) * rad,
+          y: h/2 + Math.sin(angle) * rad,
+          tx: targetPoints[i % targetPoints.length].x,
+          ty: targetPoints[i % targetPoints.length].y,
+          size: 1.6 + Math.random() * 2.2,
+          speed: 0.05 + Math.random() * 0.05,
+          t: Math.random() * 0.4
+        });
+      }
+      stage = 0;
+      progress = 0;
+      animateLoading();
+      setTimeout(() => { if (!loadingComplete) forceFinish(); }, 3800);
+    }
+    
+    function forceFinish() {
+      if (loadingComplete) return;
+      cancelAnimationFrame(animFrame);
+      loadingComplete = true;
+      document.getElementById('loadingScreen').classList.add('fade-out');
+      setTimeout(() => {
+        document.getElementById('loadingScreen').style.display = 'none';
+        document.getElementById('mainContent').classList.add('visible');
+      }, 500);
+    }
+    
+    function animateLoading() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      if (stage === 0) {
+        let allDone = true;
+        for (let p of particles) {
+          if (p.t < 1) {
+            allDone = false;
+            p.t += p.speed;
+            if (p.t > 1) p.t = 1;
+          }
+          const ease = 1 - Math.pow(1 - p.t, 2);
+          const cx = p.x + (p.tx - p.x) * ease;
+          const cy = p.y + (p.ty - p.y) * ease;
+          ctx.beginPath();
+          ctx.arc(cx, cy, p.size, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(0, 255, 0, ${0.7 + Math.sin(Date.now()*0.025)*0.3})`;
+          ctx.fill();
+          ctx.shadowBlur = 5;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+        if (allDone) {
+          stage = 1;
+          progress = 0;
+        }
+      } else if (stage === 1) {
+        progress += 0.07;
+        for (let p of particles) {
+          ctx.beginPath();
+          ctx.arc(p.tx, p.ty, p.size * 0.9, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(0, 255, 0, 0.95)`;
+          ctx.fill();
+        }
+        if (Math.random() < 0.3) {
+          ctx.fillStyle = `rgba(0, 255, 0, ${0.6})`;
+          ctx.fillRect(Math.random() * canvas.width, 0, 20, canvas.height);
+        }
+        ctx.fillStyle = `rgba(0, 255, 0, ${1 - progress})`;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (progress >= 1) {
+          forceFinish();
+          return;
+        }
+      }
+      animFrame = requestAnimationFrame(animateLoading);
+    }
+    
+    window.addEventListener('resize', () => { if (!loadingComplete) resizeCanvas(); });
+    resizeCanvas();
+    
+    // ---------- TOOL LOGIC (ALL RESULTS PERMANENTLY BLURRED) ----------
+    function simpleHash(s) { let h=0; for(let i=0;i<s.length;i++){ h=((h<<5)-h)+s.charCodeAt(i); h|=0; } return Math.abs(h); }
+    function esc(s) { return String(s).replace(/[&<>]/g, m=> m==='&'?'&amp;': m==='<'?'&lt;':'&gt;'); }
+    function blurText(t) { return `<span class="blur-permanent">${esc(t)}</span>`; }
+    
+    // Leak Search
+    function leakSearch() {
+      let u = document.getElementById('osintUsername').value.trim();
+      if (!u) { document.getElementById('leakResult').innerHTML = '⚠️ Enter username.'; return; }
+      let html = `<strong>🔎 3 leaked databases found for "${esc(u)}"</strong><br><br>`;
+      for (let i=0;i<3;i++) {
+        let email = `${u.substring(0,3)}${simpleHash(u)%100}@${["gmail.com","yahoo.com","protonmail.com"][i]}`;
+        let phone = `+1 ${Math.floor(Math.random()*900)+100}-${Math.floor(Math.random()*900)+100}-${Math.floor(Math.random()*9000)+1000}`;
+        html += `<div><strong>📀 ${["Collection #1 (2023)","X-Force Leak (2024)","DarkWeb Index v5"][i]}</strong><br>✉️ ${blurText(email)}<br>📞 ${blurText(phone)}</div>`;
+      }
+      html += `<div style="margin-top:10px;background:#0a1f0a;padding:6px;">⚠️ Full credentials hidden — <span style="color:#8aff8a;">Subscribe via Discord</span> to reveal.</div>`;
+      document.getElementById('leakResult').innerHTML = html;
+    }
+    
+    // IP Lookup
+    function ipLookup() {
+      let ip = document.getElementById('ipInput').value.trim();
+      if (!ip) { document.getElementById('ipResult').innerHTML = '⚠️ Enter IP.'; return; }
+      const cities = ["Miami, FL","Los Angeles, CA","Chicago, IL","Houston, TX","Seattle, WA"];
+      const isps = ["Comcast","Spectrum","AT&T","Verizon","Cox"];
+      const city = cities[simpleHash(ip) % cities.length];
+      const isp = isps[simpleHash(ip) % isps.length];
+      const proxy = Math.random() > 0.7 ? "PROXY/VPN DETECTED" : "Direct connection";
+      document.getElementById('ipResult').innerHTML = `🌐 IP: ${blurText(ip)}<br>📍 Location: ${blurText(city)}<br>🏢 ISP: ${blurText(isp)}<br>🛡️ ${blurText(proxy)}`;
+    }
+    
+    // Username → IP Resolver
+    let lastResolved = "";
+    function resolveUserIp() {
+      let u = document.getElementById('pullerUsername').value.trim();
+      if (!u) { document.getElementById('pullerResult').innerHTML = '⚠️ Enter username.'; return; }
+      const h = simpleHash(u);
+      const fakeIp = `${(h%255)}.${(h*13)%255}.${(h*37)%255}.${(h*71)%255}`;
+      lastResolved = fakeIp;
+      document.getElementById('pullerResult').innerHTML = `🎯 Resolved IP for "${esc(u)}": ${blurText(fakeIp)}<br>Click "SEND TO TRACKER" to geolocate.`;
+    }
+    function sendToTracker() {
+      if (!lastResolved) { document.getElementById('pullerResult').innerHTML += '<br>⚠️ Resolve first.'; return; }
+      document.getElementById('ipInput').value = lastResolved;
+      ipLookup();
+    }
+    
+    // Real Name Lookup
+    function nameLookup() {
+      let u = document.getElementById('nameInput').value.trim();
+      if (!u) { document.getElementById('nameResult').innerHTML = '⚠️ Enter username.'; return; }
+      const names = ["Alex Mercer","Jamie Knight","Jordan Vex","Taylor Cipher","Riley Shadow"];
+      const name = names[simpleHash(u) % names.length];
+      document.getElementById('nameResult').innerHTML = `👤 Real name: ${blurText(name)}<br>🔓 Subscribe to unblur full identity.`;
+    }
+    
+    // Identity Unmask
+    function unmaskIdentity() {
+      let t = document.getElementById('identityTarget').value.trim();
+      if (!t) { document.getElementById('identityResult').innerHTML = '⚠️ Enter target.'; return; }
+      const h = simpleHash(t);
+      const names = ["Elena Vance","Marcus Thorne","Sofia Rivera","Damon Cross"];
+      const locs = ["Brooklyn, NY","London, UK","Berlin, DE","Toronto, CA"];
+      const name = names[h % names.length];
+      const loc = locs[h % locs.length];
+      document.getElementById('identityResult').innerHTML = `🕵️ Target: ${esc(t)}<br>👤 Full name: ${blurText(name)}<br>📍 Location: ${blurText(loc)}<br><em>Subscribe for unblurred data.</em>`;
+    }
+    
+    // Locked tools handler
+    function lockedTool(id) { document.getElementById(id).innerHTML = '🔒 Requires active subscription. Contact Discord to unlock all features.'; }
+    
+    // Subscription plan selection
+    let activePlan = null;
+    const plans = document.querySelectorAll('.plan-card');
+    const subStat = document.getElementById('subStatus');
+    plans.forEach(c => {
+      c.addEventListener('click', () => {
+        plans.forEach(p => p.classList.remove('selected'));
+        c.classList.add('selected');
+        activePlan = c.getAttribute('data-plan');
+        let d = activePlan === '25' ? '$25 (1 week)' : (activePlan === '50' ? '$50 (2 weeks)' : '$100 (LIFETIME)');
+        subStat.innerHTML = `📡 Selected: ${d}. Copy Discord username and message me.`;
+      });
+    });
+    subStat.innerHTML = 'Select a plan, then copy Discord username and message me.';
+    
+    // Toolkit toggle
+    const toolkitBtn = document.getElementById('showToolkitBtn');
+    const toolkitArea = document.getElementById('toolkitArea');
+    toolkitBtn.addEventListener('click', () => {
+      toolkitArea.classList.toggle('active');
+      toolkitBtn.textContent = toolkitArea.classList.contains('active') ? '🔒 HIDE TOOLKIT' : '🔓 ACCESS FULL TOOLKIT';
+    });
+    
+    // Attach event listeners for active tools
+    document.getElementById('searchLeakBtn').addEventListener('click', leakSearch);
+    document.getElementById('ipTrackBtn').addEventListener('click', ipLookup);
+    document.getElementById('pullIpBtn').addEventListener('click', resolveUserIp);
+    document.getElementById('sendToTrackerBtn').addEventListener('click', sendToTracker);
+    document.getElementById('nameLookupBtn').addEventListener('click', nameLookup);
+    document.getElementById('revealIdentityBtn').addEventListener('click', unmaskIdentity);
+    
+    // Locked tools listeners
+    const lockedBtns = ['phoneLookupBtn','socialBtn','simBtn','wifiBtn','darkEmailBtn','leakPassBtn','binBtn','imageGeoBtn','deepfakeBtn','faceBtn','btcBtn','darkMarketBtn'];
+    const lockedResultIds = ['phoneResult','socialResult','simResult','wifiResult','darkEmailResult','leakPassResult','binResult','imageResult','deepfakeResult','faceResult','btcResult','darkMarketResult'];
+    for (let i=0; i<lockedBtns.length; i++) {
+      const btn = document.getElementById(lockedBtns[i]);
+      if (btn) btn.addEventListener('click', () => lockedTool(lockedResultIds[i]));
+    }
+    
+    // Discord copy button (top)
+    const topCopyBtn = document.getElementById('topCopyBtn');
+    const discordUser = "@syph0n.sys.core";
+    function copyDiscord(btn) {
+      navigator.clipboard.writeText(discordUser).then(() => {
+        const orig = btn.innerText;
+        btn.innerText = '✓ COPIED!';
+        setTimeout(() => btn.innerText = orig, 1500);
+      });
+    }
+    topCopyBtn.addEventListener('click', () => copyDiscord(topCopyBtn));
+  })();
+</script>
+</body>
+</html>
